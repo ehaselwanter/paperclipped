@@ -28,6 +28,8 @@ class PaperclippedExtension < Radiant::Extension
   
   def activate
     Admin::ResourceController.send :include, PaperclippedInterface
+    Admin::PagesController.send :include, PaperclippedInterface
+    
     Radiant::AdminUI.send :include, AssetsAdminUI unless defined? admin.asset # UI is a singleton and already loaded
     admin.asset = Radiant::AdminUI.load_default_asset_regions
 
@@ -52,11 +54,13 @@ class PaperclippedExtension < Radiant::Extension
       Paperclip.options[:image_magick_path] = Radiant::Config["assets.image_magick_path"]
     end
     
-    admin.nav[:content] << admin.nav_item(:assets, "Assets", "/admin/assets")
+    tab 'Content' do
+      add_item 'Assets', '/admin/assets', :after => 'Pages'
+    end
+    
   end
   
   def deactivate
-    # admin.tabs.remove "Assets"
   end
   
 end
